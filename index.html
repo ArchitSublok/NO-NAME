@@ -60,23 +60,50 @@
             );
         }
 
-        function App() {
-            const [view, setView] = useState('landing');
+        // function App() {
+        //     const [view, setView] = useState('landing');
 
-            return (
-                <div style={{ background: C.bg, minHeight: '100vh' }}>
-                    {view === 'landing' ? (
-                        <Landing onStart={() => setView('profile')} />
-                    ) : (
-                        <div style={{ padding: '40px', textAlign: 'center' }}>
-                            <h2>Profile Section</h2>
-                            <p>This is where the user data collection will happen.</p>
-                            <button onClick={() => setView('landing')} style={{color: C.accent, background: 'none', border: '1px solid ' + C.accent, padding: '10px', borderRadius: '8px', cursor: 'pointer'}}>Back to Home</button>
-                        </div>
-                    )}
-                </div>
-            );
-        }
+        //     return (
+        //         <div style={{ background: C.bg, minHeight: '100vh' }}>
+        //             {view === 'landing' ? (
+        //                 <Landing onStart={() => setView('profile')} />
+        //             ) : (
+        //                 <div style={{ padding: '40px', textAlign: 'center' }}>
+        //                     <h2>Profile Section</h2>
+        //                     <p>This is where the user data collection will happen.</p>
+        //                     <button onClick={() => setView('landing')} style={{color: C.accent, background: 'none', border: '1px solid ' + C.accent, padding: '10px', borderRadius: '8px', cursor: 'pointer'}}>Back to Home</button>
+        //                 </div>
+        //             )}
+        //         </div>
+        //     );
+        // }
+
+        function App() {
+    const [view, setView] = useState('landing');
+    const [profile, setProfile] = useState(null);
+
+    return (
+        <div style={{ background: C.bg, minHeight: '100vh' }}>
+            {/* 1. Show Landing */}
+            {view === 'landing' && (
+                <Landing onStart={() => setView('profile')} />
+            )}
+
+            {/* 2. Show Profile Collection */}
+            {view === 'profile' && (
+                <Profile onComplete={(p) => { 
+                    setProfile(p); 
+                    setView('chat'); 
+                }} />
+            )}
+
+            {/* 3. Show the actual Chatbot */}
+            {view === 'chat' && profile && (
+                <Chat profile={profile} />
+            )}
+        </div>
+    );
+}
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
