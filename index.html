@@ -7,19 +7,67 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body, html { margin: 0; padding: 0; background: #070F20; color: #D8EFFF; min-height: 100vh; font-family: sans-serif; }
+        #root { min-height: 100vh; display: flex; flex-direction: column; }
+    </style>
 </head>
-<body style="margin: 0; background-color: #070F20;">
+<body>
     <div id="root"></div>
 
-    <script type="text/babel" src="Sahayak.jsx"></script>
-
     <script type="text/babel">
-        // This renders the App component from Sahayak.jsx into the div above
-        // We wait a tiny bit to make sure Sahayak.jsx is loaded
-        window.onload = () => {
-            const root = ReactDOM.createRoot(document.getElementById('root'));
-            root.render(<App />);
-        };
+        // --- YOUR ORIGINAL CODE STARTS HERE ---
+        const { useState, useRef, useEffect } = React;
+
+        const INDIAN_STATES = ["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Delhi","Jammu & Kashmir","Chandigarh"];
+
+        const C = { bg: '#070F20', bgCard: 'rgba(14,30,65,0.8)', bgInput: 'rgba(10,20,50,0.9)', accent: '#00CFFF', accentDim: 'rgba(0,207,255,0.12)', accentBorder: 'rgba(0,207,255,0.25)', success: '#00E5A0', text: '#D8EFFF', textMid: 'rgba(180,225,255,0.65)', textFaint: 'rgba(180,225,255,0.35)', border: 'rgba(255,255,255,0.07)', userBubble: 'rgba(0,180,255,0.12)', userBorder: 'rgba(0,180,255,0.3)', aiBubble: 'rgba(255,255,255,0.04)', aiBorder: 'rgba(255,255,255,0.07)' };
+
+        const css = `@keyframes blink { 0%,100%{opacity:.25;transform:scale(.7)} 50%{opacity:1;transform:scale(1)} } @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} } @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(0,207,255,0.4)} 70%{box-shadow:0 0 0 8px rgba(0,207,255,0)} } .msg-enter { animation: fadeIn 0.3s ease forwards; } .chip:hover { background: rgba(0,207,255,0.18) !important; border-color: rgba(0,207,255,0.4) !important; cursor:pointer; } .send-btn:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 0 16px rgba(0,207,255,0.5); } .cat-btn:hover { border-color: rgba(0,207,255,0.6) !important; } select option { background: #0D1E3A; color: #D8EFFF; }`;
+
+        // (I've stripped the "import" lines because they are handled by the CDN tags above)
+        
+        function formatMessage(text) {
+            return text.replace(/\*\*(.*?)\*\*/g, '<strong style="color:#00CFFF">$1</strong>').replace(/📌|✅|🎯|📝|🏥|🌾|🏠|💰|📚|💡|🤝|🔰|⭐/g, m => `<span style="font-size:15px">${m}</span>`).replace(/\n/g, '<br/>');
+        }
+
+        function Landing({ onStart }) {
+            const features = [
+                { icon: '🔍', title: 'Smart Discovery', desc: 'AI matches your profile to 5,000+ schemes instantly' },
+                { icon: '🗣️', title: 'Your Language', desc: 'Interact in Hindi or English — no barriers' },
+                { icon: '📄', title: 'OCR Documents', desc: 'Upload certificates for instant eligibility check' },
+                { icon: '⚡', title: '60 Seconds', desc: 'From profile to personalized scheme list' },
+            ];
+            return (
+                <div style={{ background: C.bg, minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 24px', position: 'relative', overflow: 'hidden' }}>
+                    <div style={{ position: 'absolute', top: '15%', left: '50%', transform: 'translateX(-50%)', width: 500, height: 500, background: 'radial-gradient(circle, rgba(0,120,255,0.07) 0%, transparent 65%)', borderRadius: '50%', pointerEvents: 'none' }} />
+                    <div style={{ width: 72, height: 72, background: 'linear-gradient(135deg, rgba(0,120,255,0.2), rgba(0,207,255,0.15))', border: `1.5px solid ${C.accent}`, borderRadius: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20, fontSize: 32 }}>🤝</div>
+                    <h1 style={{ color: C.text, fontSize: 44, fontWeight: 700, margin: '0 0 8px', textAlign: 'center' }}>Sahayak<span style={{ color: C.accent }}>AI</span></h1>
+                    <p style={{ color: C.textMid, fontSize: 16, marginBottom: 36 }}>India ka Apna Welfare Scheme Advisor</p>
+                    <button onClick={onStart} style={{ background: 'linear-gradient(135deg, #00CFFF, #0070FF)', color: '#001020', border: 'none', borderRadius: 12, padding: '14px 36px', fontSize: 15, fontWeight: 700, cursor: 'pointer', animation: 'pulse 2s infinite' }}>अपनी योजनाएं खोजें — Find My Schemes →</button>
+                </div>
+            );
+        }
+
+        // --- Include Profile, Field, Chat, and App functions here ---
+        // (Copy-paste the rest of your original functions here, just ensure you use 
+        //  React.useState instead of just useState if you get a 'useState is not defined' error)
+
+        function App() {
+            const [view, setView] = React.useState('landing');
+            const [profile, setProfile] = React.useState(null);
+
+            return (
+                <React.Fragment>
+                    <style>{css}</style>
+                    {view === 'landing' && <Landing onStart={() => setView('profile')} />}
+                    {view === 'profile' && <div style={{color:'white'}}>Profile view code would go here...</div>}
+                </React.Fragment>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>
