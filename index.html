@@ -8,170 +8,103 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-        body, html { margin: 0; padding: 0; background: #070F20; color: #D8EFFF; min-height: 100vh; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow-x: hidden; }
+        body, html { margin: 0; padding: 0; background: #070F20; color: #D8EFFF; min-height: 100vh; font-family: sans-serif; overflow-x: hidden; }
         #root { min-height: 100vh; }
-        @keyframes blink { 0%,100%{opacity:.25;transform:scale(.7)} 50%{opacity:1;transform:scale(1)} }
-        @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(0,207,255,0.4)} 70%{box-shadow:0 0 0 8px rgba(0,207,255,0)} }
-        .msg-enter { animation: fadeIn 0.3s ease forwards; }
-        .chip:hover { background: rgba(0,207,255,0.18) !important; border-color: rgba(0,207,255,0.4) !important; cursor:pointer; }
-        /* This forces the dropdown and its options to match your theme */
-select {
-    appearance: none; /* Removes default browser styling */
-    background-color: rgba(255, 255, 255, 0.05) !important;
-    color: white !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    cursor: pointer;
-}
-
-/* This fixes the white box issue you see in your screenshot */
-select option {
-    background-color: #070F20 !important; /* Matches your C.bg color */
-    color: white !important;
-}
-
-/* Adds a hover effect for better UX */
-select:focus {
-    border-color: #00CFFF !important;
-    outline: none;
-}
+        .msg-enter { animation: fadeIn 0.4s ease forwards; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+        /* Scrollbar styling for a pro look */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #070F20; }
+        ::-webkit-scrollbar-thumb { background: #1A2A4A; border-radius: 10px; }
     </style>
 </head>
 <body>
     <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        const C = { bg: '#070F20', bgCard: 'rgba(14,30,65,0.8)', accent: '#00CFFF', accentBorder: 'rgba(0,207,255,0.3)', textMid: 'rgba(180,225,255,0.65)' };
+        const STATES = ["Delhi", "Maharashtra", "Karnataka", "Uttar Pradesh", "Tamil Nadu", "Gujarat", "Rajasthan", "Punjab", "West Bengal", "Bihar"];
 
-   <script type="text/babel">
-    const { useState, useEffect, useRef } = React;
-
-const C = {
-    bg: '#070F20',
-    bgCard: 'rgba(14,30,65,0.8)',
-    accent: '#00CFFF',
-    accentBorder: 'rgba(0,207,255,0.3)',
-    textMid: 'rgba(180,225,255,0.65)'
-};
-
-const INDIAN_STATES = ["Andhra Pradesh", "Assam", "Bihar", "Delhi", "Gujarat", "Haryana", "Karnataka", "Maharashtra", "Punjab", "Rajasthan", "Tamil Nadu", "Uttar Pradesh", "West Bengal"];
-
-function Landing({ onStart }) {
-    return (
-        <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px', textAlign: 'center' }}>
-            <div style={{ fontSize: '64px', marginBottom: '20px' }}>🤝</div>
-            <h1 style={{ fontSize: '48px', margin: '0 0 10px' }}>Sahayak<span style={{ color: C.accent }}>AI</span></h1>
-            <p style={{ color: C.textMid, fontSize: '18px', maxWidth: '400px', marginBottom: '40px' }}>Your intelligent guide to Indian government welfare schemes.</p>
-            <button onClick={onStart} style={{ background: 'linear-gradient(135deg, #00CFFF, #0070FF)', color: '#001020', border: 'none', borderRadius: '12px', padding: '16px 40px', fontSize: '18px', fontWeight: 'bold', cursor: 'pointer' }}>Start Finding Schemes →</button>
-        </div>
-    );
-}
-
-function Profile({ onComplete }) {
-    const [step, setStep] = useState(1);
-    const [p, setP] = useState({ age: '', gender: '', state: '', occupation: '' });
-    
-    const inputStyle = { 
-        width: '100%', padding: '12px', borderRadius: '8px', 
-        background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', 
-        color: 'white', fontSize: '16px', marginBottom: '15px', boxSizing: 'border-box' 
-    };
-
-    const pillStyle = (selected) => ({
-        padding: '10px 20px', borderRadius: '20px', cursor: 'pointer',
-        background: selected ? C.accent : 'rgba(255,255,255,0.05)',
-        color: selected ? '#001020' : 'white',
-        border: `1px solid ${selected ? C.accent : 'rgba(255,255,255,0.1)'}`,
-        margin: '5px', fontWeight: 'bold', transition: '0.2s'
-    });
-
-    return (
-        <div style={{ maxWidth: '400px', margin: '80px auto', padding: '30px', background: C.bgCard, borderRadius: '20px', border: `1px solid ${C.accentBorder}`, textAlign: 'center' }}>
-            <h2 style={{ marginBottom: '20px', color: C.accent }}>{step === 1 ? "Basic Details" : "Your Location"}</h2>
-            
-            {step === 1 ? (
-                <div className="msg-enter">
-                    <p style={{ color: C.textMid, fontSize: '14px', marginBottom: '10px' }}>Enter your age</p>
-                    <input type="number" placeholder="e.g. 21" style={inputStyle} value={p.age} onChange={e => setP({...p, age: e.target.value})} />
-                    
-                    <p style={{ color: C.textMid, fontSize: '14px', marginBottom: '10px' }}>Select Gender</p>
-                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px', flexWrap: 'wrap' }}>
-                        {["Male", "Female", "Other"].map(g => (
-                            <div key={g} onClick={() => setP({...p, gender: g})} style={pillStyle(p.gender === g)}>{g}</div>
-                        ))}
-                    </div>
-
-                    <button onClick={() => p.age && p.gender && setStep(2)} 
-                            style={{ width: '100%', padding: '12px', background: C.accent, border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', opacity: (p.age && p.gender) ? 1 : 0.5 }}>
-                        Next Step →
-                    </button>
+        function Landing({ onStart }) {
+            return (
+                <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '70px', marginBottom: '20px' }}>🤝</div>
+                    <h1 style={{ fontSize: '42px', margin: '0' }}>Sahayak<span style={{ color: C.accent }}>AI</span></h1>
+                    <p style={{ color: C.textMid, maxWidth: '350px', lineHeight: '1.6', margin: '20px 0 40px' }}>Your AI companion for Indian Government Schemes.</p>
+                    <button onClick={onStart} style={{ background: C.accent, color: '#001020', border: 'none', borderRadius: '30px', padding: '16px 48px', fontSize: '18px', fontWeight: 'bold', cursor: 'pointer', boxShadow: `0 0 20px ${C.accentBorder}` }}>Get Started →</button>
                 </div>
-            ) : (
-                <div className="msg-enter">
-                    <p style={{ color: C.textMid, fontSize: '14px', marginBottom: '10px' }}>Select State</p>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '15px', maxHeight: '150px', overflowY: 'auto', padding: '10px', background: 'rgba(0,0,0,0.2)', borderRadius: '10px' }}>
-                        {INDIAN_STATES.map(s => (
-                            <div key={s} onClick={() => setP({...p, state: s})} style={pillStyle(p.state === s)}>{s}</div>
-                        ))}
-                    </div>
+            );
+        }
 
-                    <p style={{ color: C.textMid, fontSize: '14px', marginBottom: '10px' }}>Occupation</p>
-                    <input placeholder="e.g. Farmer, Student" style={inputStyle} value={p.occupation} onChange={e => setP({...p, occupation: e.target.value})} />
-                    
-                    <button onClick={() => onComplete(p)} 
-                            style={{ width: '100%', padding: '12px', background: C.accent, border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', opacity: (p.state && p.occupation) ? 1 : 0.5 }}>
-                        Finish & Start Chatting
-                    </button>
+        function Profile({ onComplete }) {
+            const [step, setStep] = useState(1);
+            const [p, setP] = useState({ age: '', gender: '', state: '', occ: '' });
+            const pill = (val, field) => ({
+                padding: '10px 18px', margin: '5px', borderRadius: '20px', cursor: 'pointer', fontSize: '14px',
+                background: p[field] === val ? C.accent : 'rgba(255,255,255,0.05)',
+                color: p[field] === val ? '#001020' : 'white',
+                border: `1px solid ${p[field] === val ? C.accent : 'rgba(255,255,255,0.1)'}`,
+                transition: '0.2s'
+            });
+
+            return (
+                <div style={{ maxWidth: '420px', margin: '60px auto', padding: '30px', background: C.bgCard, borderRadius: '24px', border: `1px solid ${C.accentBorder}`, backdropFilter: 'blur(10px)' }}>
+                    <h2 style={{ textAlign: 'center', marginBottom: '30px' }}>{step === 1 ? "About You" : "Location"}</h2>
+                    {step === 1 ? (
+                        <div className="msg-enter">
+                            <input type="number" placeholder="Enter Age" style={{ width: '100%', padding: '14px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '12px', marginBottom: '20px', boxSizing: 'border-box' }} onChange={e => setP({...p, age: e.target.value})} />
+                            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '30px' }}>
+                                {["Male", "Female", "Other"].map(g => <div key={g} onClick={() => setP({...p, gender: g})} style={pill(g, 'gender')}>{g}</div>)}
+                            </div>
+                            <button onClick={() => p.age && p.gender && setStep(2)} style={{ width: '100%', padding: '14px', background: C.accent, border: 'none', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>Next</button>
+                        </div>
+                    ) : (
+                        <div className="msg-enter">
+                            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', maxHeight: '160px', overflowY: 'auto', background: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '12px', marginBottom: '20px' }}>
+                                {STATES.map(s => <div key={s} onClick={() => setP({...p, state: s})} style={pill(s, 'state')}>{s}</div>)}
+                            </div>
+                            <input placeholder="Occupation (e.g. Farmer)" style={{ width: '100%', padding: '14px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '12px', marginBottom: '25px', boxSizing: 'border-box' }} onChange={e => setP({...p, occ: e.target.value})} />
+                            <button onClick={() => onComplete(p)} style={{ width: '100%', padding: '14px', background: C.accent, border: 'none', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>Finish</button>
+                        </div>
+                    )}
                 </div>
-            )}
-        </div>
-    );
-}
+            );
+        }
 
-function Chat({ profile }) {
-    const [messages, setMessages] = useState([{ role: 'ai', text: `Namaste! I see you are from ${profile.state}. How can I help you find schemes today?` }]);
-    const [input, setInput] = useState('');
-    const endRef = useRef(null);
+        function Chat({ profile }) {
+            const [msgs, setMsgs] = useState([{ r: 'ai', t: `Namaste! I'm Sahayak. I've found 3 schemes for a ${profile.occ} in ${profile.state}. What would you like to know?` }]);
+            const [input, setInput] = useState('');
+            const end = useRef(null);
+            useEffect(() => end.current?.scrollIntoView({ behavior: 'smooth' }), [msgs]);
 
-    useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
+            return (
+                <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', maxWidth: '700px', margin: '0 auto' }}>
+                    <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
+                        {msgs.map((m, i) => (
+                            <div key={i} className="msg-enter" style={{ alignSelf: m.r==='u' ? 'flex-end' : 'flex-start', background: m.r==='u' ? C.accentBorder : 'rgba(255,255,255,0.05)', padding: '14px', borderRadius: '18px', marginBottom: '12px', marginLeft: m.r==='u' ? 'auto' : '0', maxWidth: '80%', border: '1px solid rgba(255,255,255,0.05)' }}>{m.t}</div>
+                        ))}
+                        <div ref={end} />
+                    </div>
+                    <div style={{ padding: '20px', display: 'flex', gap: '10px', background: '#0A1428' }}>
+                        <input style={{ flex: 1, padding: '14px', borderRadius: '12px', border: '1px solid #1A2A4A', background: '#000', color: '#fff' }} value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && (setMsgs([...msgs, {r:'u',t:input}, {r:'ai',t:'Thinking...'}]), setInput(''))} placeholder="Ask me anything..." />
+                        <button style={{ padding: '0 25px', background: C.accent, border: 'none', borderRadius: '12px', fontWeight: 'bold' }}>Send</button>
+                    </div>
+                </div>
+            );
+        }
 
-    const send = () => {
-        if (!input.trim()) return;
-        setMessages(prev => [...prev, { role: 'user', text: input }, { role: 'ai', text: "I'm checking the database for schemes that match your profile..." }]);
-        setInput('');
-    };
-
-    return (
-        <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', maxWidth: '600px', margin: '0 auto' }}>
-            <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
-                {messages.map((m, i) => (
-                    <div key={i} className="msg-enter" style={{ alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start', background: m.role === 'user' ? C.accentBorder : 'rgba(255,255,255,0.05)', padding: '12px', borderRadius: '12px', marginBottom: '10px', marginLeft: m.role === 'user' ? 'auto' : '0', maxWidth: '80%', border: '1px solid rgba(255,255,255,0.1)' }}>{m.text}</div>
-                ))}
-                <div ref={endRef} />
-            </div>
-            <div style={{ padding: '20px', display: 'flex', gap: '10px', background: C.bgCard }}>
-                <input style={{ flex: 1, padding: '12px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', background: '#000', color: '#fff' }} value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && send()} placeholder="Type your message..." />
-                <button onClick={send} style={{ padding: '12px 20px', background: C.accent, border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Send</button>
-            </div>
-        </div>
-    );
-}
-
-function App() {
-    const [view, setView] = useState('landing');
-    const [profile, setProfile] = useState(null);
-
-    return (
-        <div style={{ background: '#070F20', minHeight: '100vh' }}>
-            {view === 'landing' && <Landing onStart={() => setView('profile')} />}
-            {view === 'profile' && <Profile onComplete={p => { setProfile(p); setView('chat'); }} />}
-            {view === 'chat' && profile && <Chat profile={profile} />}
-        </div>
-    );
-}
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
-</script>
-
-    
-       
+        function App() {
+            const [v, setV] = useState('lnd');
+            const [p, setP] = useState(null);
+            return (
+                <div style={{ background: '#070F20', minHeight: '100vh' }}>
+                    {v === 'lnd' && <Landing onStart={() => setV('prf')} />}
+                    {v === 'prf' && <Profile onComplete={data => { setP(data); setV('cht'); }} />}
+                    {v === 'cht' && <Chat profile={p} />}
+                </div>
+            );
+        }
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
 </body>
 </html>
