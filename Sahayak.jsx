@@ -438,7 +438,7 @@ function Chat({ profile }) {
   );
 }
 
-export default function App() {
+function App() {
   const [view, setView] = useState('landing');
   const [profile, setProfile] = useState(null);
 
