@@ -20,22 +20,29 @@
 <body>
     <div id="root"></div>
 
-    <script type="text/babel">
+   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
 
-    // 1. PASTE ALL YOUR CONSTANTS HERE (INDIAN_STATES, C, css string, etc.)
-    const INDIAN_STATES = [...]; 
-    const C = { ... };
+    // --- 1. YOUR CONSTANTS ---
+    const INDIAN_STATES = ["Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal", "Delhi", "Jammu & Kashmir", "Chandigarh"];
+    
+    const C = {
+        bg: '#070F20',
+        bgCard: 'rgba(14,30,65,0.8)',
+        accent: '#00CFFF',
+        text: '#D8EFFF',
+        textMid: 'rgba(180,225,255,0.65)',
+        // Add any other colors from your original C constant here
+    };
 
-    // 2. PASTE YOUR SUB-COMPONENTS HERE
-    function Field({ label, ...props }) { /* ... */ }
+    // --- 2. THE COMPONENTS ---
 
     function Landing({ onStart }) {
         return (
             <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px', textAlign: 'center' }}>
                 <div style={{ fontSize: '64px', marginBottom: '20px' }}>🤝</div>
-                <h1 style={{ fontSize: '48px', margin: '0 0 10px' }}>Sahayak<span style={{ color: '#00CFFF' }}>AI</span></h1>
-                <p style={{ color: 'rgba(180,225,255,0.65)', fontSize: '18px', maxWidth: '400px', marginBottom: '40px' }}>
+                <h1 style={{ fontSize: '48px', margin: '0 0 10px' }}>Sahayak<span style={{ color: C.accent }}>AI</span></h1>
+                <p style={{ color: C.textMid, fontSize: '18px', maxWidth: '400px', marginBottom: '40px' }}>
                     India's AI-powered welfare scheme advisor.
                 </p>
                 <button onClick={onStart} style={{ background: 'linear-gradient(135deg, #00CFFF, #0070FF)', color: '#001020', border: 'none', borderRadius: '12px', padding: '16px 40px', fontSize: '18px', fontWeight: 'bold', cursor: 'pointer' }}>
@@ -45,24 +52,162 @@
         );
     }
 
-    // PASTE YOUR FULL PROFILE COMPONENT CODE HERE
+    // PASTE YOUR FULL 'Profile' FUNCTION HERE
+    // Ensure you use 'useState' instead of 'React.useState' since we defined it above
     function Profile({ onComplete }) {
-        // ... (The code with age, gender, state inputs)
-    }
+        /* [COPY YOUR PROFILE CODE HERE] */
+        function Profile({ onComplete }) {
+        const [step, setStep] = useState(1);
+        const [p, setP] = useState({ 
+            age: '', gender: '', state: '', category: '', occupation: '', income: '' 
+        });
 
-    // PASTE YOUR FULL CHAT COMPONENT CODE HERE
+        const next = () => step < 3 ? setStep(step + 1) : onComplete(p);
+
+        const Field = ({ label, children }) => (
+            <div style={{ marginBottom: '20px', textAlign: 'left' }}>
+                <label style={{ display: 'block', color: C.textMid, fontSize: '14px', marginBottom: '8px' }}>{label}</label>
+                {children}
+            </div>
+        );
+
+        const inputStyle = {
+            width: '100%', padding: '12px', borderRadius: '8px', background: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.1)', color: 'white', fontSize: '16px', outline: 'none'
+        };
+
+        return (
+            <div style={{ maxWidth: '400px', margin: '80px auto', padding: '30px', background: C.bgCard, borderRadius: '20px', border: `1px solid ${C.accentBorder}`, backdropFilter: 'blur(10px)', textAlign: 'center' }}>
+                <div style={{ fontSize: '32px', marginBottom: '10px' }}>👤</div>
+                <h2 style={{ margin: '0 0 20px' }}>Create Profile</h2>
+                
+                {step === 1 && (
+                    <div className="msg-enter">
+                        <Field label="How old are you?">
+                            <input type="number" style={inputStyle} value={p.age} onChange={e => setP({...p, age: e.target.value})} placeholder="Enter age" />
+                        </Field>
+                        <Field label="Gender">
+                            <select style={inputStyle} value={p.gender} onChange={e => setP({...p, gender: e.target.value})}>
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </Field>
+                    </div>
+                )}
+
+                {step === 2 && (
+                    <div className="msg-enter">
+                        <Field label="State of Residence">
+                            <select style={inputStyle} value={p.state} onChange={e => setP({...p, state: e.target.value})}>
+                                <option value="">Select State</option>
+                                {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                            </select>
+                        </Field>
+                        <Field label="Occupation">
+                            <input style={inputStyle} value={p.occupation} onChange={e => setP({...p, occupation: e.target.value})} placeholder="e.g. Farmer, Student, Small Business" />
+                        </Field>
+                    </div>
+                )}
+
+                {step === 3 && (
+                    <div className="msg-enter">
+                        <Field label="Annual Family Income (₹)">
+                            <input type="number" style={inputStyle} value={p.income} onChange={e => setP({...p, income: e.target.value})} placeholder="e.g. 200000" />
+                        </Field>
+                        <Field label="Caste Category">
+                            <select style={inputStyle} value={p.category} onChange={e => setP({...p, category: e.target.value})}>
+                                <option value="General">General</option>
+                                <option value="OBC">OBC</option>
+                                <option value="SC/ST">SC/ST</option>
+                            </select>
+                        </Field>
+                    </div>
+                )}
+
+                <button onClick={next} style={{ width: '100%', padding: '14px', borderRadius: '10px', background: C.accent, color: '#001020', border: 'none', fontWeight: 'bold', cursor: 'pointer', marginTop: '10px' }}>
+                    {step === 3 ? 'Finish & Chat' : 'Continue →'}
+                </button>
+            </div>
+        );
+    }
+    
+
+    // PASTE YOUR FULL 'Chat' FUNCTION HERE
     function Chat({ profile }) {
-        // ... (The code with the messages and API calls)
+        /* [COPY YOUR CHAT CODE HERE] */
+        const [messages, setMessages] = useState([
+            { role: 'ai', text: `Namaste! Based on your profile from ${profile.state}, I am ready to help you find schemes. What would you like to know?` }
+        ]);
+        const [input, setInput] = useState('');
+        const [loading, setLoading] = useState(false);
+        const endRef = useRef(null);
+
+        useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
+
+        const send = async () => {
+            if (!input.trim() || loading) return;
+            const userMsg = input;
+            setInput('');
+            setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
+            setLoading(true);
+
+            // SIMULATED AI RESPONSE (Replace with your actual API fetch call)
+            setTimeout(() => {
+                setMessages(prev => [...prev, { role: 'ai', text: "I'm checking the latest database for schemes matching your profile. Currently, I'm a demo, but soon I'll connect to the live API!" }]);
+                setLoading(false);
+            }, 1000);
+        };
+
+        return (
+            <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', maxWidth: '800px', margin: '0 auto', background: 'rgba(10,20,50,0.5)' }}>
+                <div style={{ padding: '20px', borderBottom: `1px solid ${C.accentBorder}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                        <h3 style={{ margin: 0 }}>SahayakAI Chat</h3>
+                        <span style={{ fontSize: '12px', color: C.accent }}>{profile.age}y • {profile.state} • {profile.occupation}</span>
+                    </div>
+                </div>
+
+                <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
+                    {messages.map((m, i) => (
+                        <div key={i} className="msg-enter" style={{ 
+                            alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start',
+                            background: m.role === 'user' ? 'rgba(0,207,255,0.1)' : 'rgba(255,255,255,0.05)',
+                            padding: '12px 16px', borderRadius: '15px', marginBottom: '15px', maxWidth: '80%',
+                            border: `1px solid ${m.role === 'user' ? C.accentBorder : 'rgba(255,255,255,0.1)'}`,
+                            marginLeft: m.role === 'user' ? 'auto' : '0'
+                        }}>
+                            {m.text}
+                        </div>
+                    ))}
+                    {loading && <div style={{ color: C.textMid, fontSize: '12px' }}>Sahayak is thinking...</div>}
+                    <div ref={endRef} />
+                </div>
+
+                <div style={{ padding: '20px', background: C.bgCard }}>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                        <input 
+                            style={{ flex: 1, padding: '14px', borderRadius: '10px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: 'white' }}
+                            value={input} 
+                            onChange={e => setInput(e.target.value)}
+                            onKeyPress={e => e.key === 'Enter' && send()}
+                            placeholder="Ask about PM-Kisan, Scholarship, etc..."
+                        />
+                        <button onClick={send} style={{ padding: '0 20px', borderRadius: '10px', background: C.accent, border: 'none', cursor: 'pointer' }}>Send</button>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
-    // 3. THE MAIN APP LOGIC (Updated to show real components)
+    // --- 3. THE MAIN APP LOGIC ---
     function App() {
         const [view, setView] = useState('landing');
         const [profile, setProfile] = useState(null);
 
         return (
-            <div style={{ background: '#070F20', minHeight: '100vh' }}>
-                <style>{css}</style>
+            <div style={{ background: C.bg, minHeight: '100vh' }}>
                 {view === 'landing' && <Landing onStart={() => setView('profile')} />}
                 
                 {view === 'profile' && (
