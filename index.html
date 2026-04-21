@@ -67,29 +67,58 @@ function Landing({ onStart }) {
 function Profile({ onComplete }) {
     const [step, setStep] = useState(1);
     const [p, setP] = useState({ age: '', gender: '', state: '', occupation: '' });
-    const inputStyle = { width: '100%', padding: '12px', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', fontSize: '16px', marginBottom: '15px', boxSizing: 'border-box' };
+    
+    const inputStyle = { 
+        width: '100%', padding: '12px', borderRadius: '8px', 
+        background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', 
+        color: 'white', fontSize: '16px', marginBottom: '15px', boxSizing: 'border-box' 
+    };
+
+    const pillStyle = (selected) => ({
+        padding: '10px 20px', borderRadius: '20px', cursor: 'pointer',
+        background: selected ? C.accent : 'rgba(255,255,255,0.05)',
+        color: selected ? '#001020' : 'white',
+        border: `1px solid ${selected ? C.accent : 'rgba(255,255,255,0.1)'}`,
+        margin: '5px', fontWeight: 'bold', transition: '0.2s'
+    });
 
     return (
         <div style={{ maxWidth: '400px', margin: '80px auto', padding: '30px', background: C.bgCard, borderRadius: '20px', border: `1px solid ${C.accentBorder}`, textAlign: 'center' }}>
-            <h2 style={{ marginBottom: '20px' }}>{step === 1 ? "Basic Details" : "Your Location"}</h2>
+            <h2 style={{ marginBottom: '20px', color: C.accent }}>{step === 1 ? "Basic Details" : "Your Location"}</h2>
+            
             {step === 1 ? (
                 <div className="msg-enter">
-                    <input type="number" placeholder="Age" style={inputStyle} value={p.age} onChange={e => setP({...p, age: e.target.value})} />
-                    <select style={inputStyle} value={p.gender} onChange={e => setP({...p, gender: e.target.value})}>
-                        <option value="">Select Gender</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                    </select>
-                    <button onClick={() => setStep(2)} style={{ width: '100%', padding: '12px', background: C.accent, border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Next</button>
+                    <p style={{ color: C.textMid, fontSize: '14px', marginBottom: '10px' }}>Enter your age</p>
+                    <input type="number" placeholder="e.g. 21" style={inputStyle} value={p.age} onChange={e => setP({...p, age: e.target.value})} />
+                    
+                    <p style={{ color: C.textMid, fontSize: '14px', marginBottom: '10px' }}>Select Gender</p>
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px', flexWrap: 'wrap' }}>
+                        {["Male", "Female", "Other"].map(g => (
+                            <div key={g} onClick={() => setP({...p, gender: g})} style={pillStyle(p.gender === g)}>{g}</div>
+                        ))}
+                    </div>
+
+                    <button onClick={() => p.age && p.gender && setStep(2)} 
+                            style={{ width: '100%', padding: '12px', background: C.accent, border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', opacity: (p.age && p.gender) ? 1 : 0.5 }}>
+                        Next Step →
+                    </button>
                 </div>
             ) : (
                 <div className="msg-enter">
-                    <select style={inputStyle} value={p.state} onChange={e => setP({...p, state: e.target.value})}>
-                        <option value="">Select State</option>
-                        {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                    </select>
-                    <input placeholder="Occupation (e.g. Student)" style={inputStyle} value={p.occupation} onChange={e => setP({...p, occupation: e.target.value})} />
-                    <button onClick={() => onComplete(p)} style={{ width: '100%', padding: '12px', background: C.accent, border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Finish & Chat</button>
+                    <p style={{ color: C.textMid, fontSize: '14px', marginBottom: '10px' }}>Select State</p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '15px', maxHeight: '150px', overflowY: 'auto', padding: '10px', background: 'rgba(0,0,0,0.2)', borderRadius: '10px' }}>
+                        {INDIAN_STATES.map(s => (
+                            <div key={s} onClick={() => setP({...p, state: s})} style={pillStyle(p.state === s)}>{s}</div>
+                        ))}
+                    </div>
+
+                    <p style={{ color: C.textMid, fontSize: '14px', marginBottom: '10px' }}>Occupation</p>
+                    <input placeholder="e.g. Farmer, Student" style={inputStyle} value={p.occupation} onChange={e => setP({...p, occupation: e.target.value})} />
+                    
+                    <button onClick={() => onComplete(p)} 
+                            style={{ width: '100%', padding: '12px', background: C.accent, border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', opacity: (p.state && p.occupation) ? 1 : 0.5 }}>
+                        Finish & Start Chatting
+                    </button>
                 </div>
             )}
         </div>
